@@ -33,6 +33,9 @@ public class Review extends TimeStamped {
 	@Column(name = "img-url")
 	private String imgUrl;
 
+	@Column(name = "user_id")
+	private Long userId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
