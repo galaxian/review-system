@@ -1,9 +1,12 @@
 package com.example.review.review.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.review.common.utiil.S3Uploader;
 import com.example.review.product.domain.Product;
 import com.example.review.product.repository.ProductRepository;
 import com.example.review.review.domain.Review;
@@ -18,6 +21,7 @@ public class ReviewService {
 
 	private final ReviewRepository reviewRepository;
 	private final ProductRepository productRepository;
+	private final S3Uploader s3Uploader;
 
 	@Transactional
 	public void CreateReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
@@ -26,9 +30,18 @@ public class ReviewService {
 
 		validateDuplicateUserReview(reviewDto.userId(), productId);
 
-		Review review = new Review(reviewDto.score(), reviewDto.content(), null, reviewDto.userId(), findProduct);
+		String uploadUrl = uploadImageIfPresent(imageFile);
+
+		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), findProduct);
 
 		reviewRepository.save(review);
+	}
+
+	private String uploadImageIfPresent(MultipartFile imageFile) {
+		return Optional.ofNullable(imageFile)
+			.filter(file -> !file.isEmpty())
+			.map(s3Uploader::upload)
+			.orElse(null);
 	}
 
 	private void validateDuplicateUserReview(Long userId, Long productId) {
