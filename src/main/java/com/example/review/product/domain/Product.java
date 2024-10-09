@@ -29,4 +29,10 @@ public class Product extends TimeStamped {
 		this.avgScore = 0F;
 		this.reviewCount = 0L;
 	}
+
+	public Product(Long id, Float avgScore, Long reviewCount) {
+		this.id = id;
+		this.avgScore = avgScore;
+		this.reviewCount = reviewCount;
+	}
 }
