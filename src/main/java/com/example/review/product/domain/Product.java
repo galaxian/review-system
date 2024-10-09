@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Product extends TimeStamped {
 
@@ -25,4 +24,9 @@ public class Product extends TimeStamped {
 
 	@Column(name = "reviewCount", nullable = false)
 	private Long reviewCount;
+
+	public Product() {
+		this.avgScore = 0F;
+		this.reviewCount = 0L;
+	}
 }
