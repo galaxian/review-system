@@ -30,7 +30,7 @@ public class Review extends TimeStamped {
 	@Column(name = "content", nullable = false)
 	private String content;
 
-	@Column(name = "img-url")
+	@Column(name = "img_url")
 	private String imgUrl;
 
 	@Column(name = "user_id")
