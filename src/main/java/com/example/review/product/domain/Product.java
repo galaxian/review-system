@@ -20,7 +20,7 @@ public class Product extends TimeStamped {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "score")
+	@Column(name = "score", nullable = false)
 	private Float avgScore;
 
 	@Column(name = "reviewCount", nullable = false)
