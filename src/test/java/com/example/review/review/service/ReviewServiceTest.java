@@ -1,5 +1,6 @@
 package com.example.review.review.service;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -83,6 +84,27 @@ class ReviewServiceTest {
 		assertDoesNotThrow(
 			() -> reviewService.CreateReview(reviewDto, productId, null)
 		);
+
+	}
+
+	@DisplayName("같은 상품에 대해 같은 유저가 중복 리뷰 시에 예외 발생")
+	@Test
+	void createReviewSameProductDuplicateUser() {
+		//given
+		Long productId = 1L;
+		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
+
+		given(productRepository.findById(anyLong()))
+			.willReturn(Optional.of(TEST_PRODUCT));
+		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
+			.willReturn(true);
+
+		//when
+		//then
+		assertThatThrownBy(
+			() -> reviewService.CreateReview(reviewDto, productId, TEST_IMAGE)
+		).isInstanceOf(RuntimeException.class)
+			.hasMessage("한 상품만 하나의 리뷰만 작성할 수 있습니다.");
 
 	}
 }
