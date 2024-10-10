@@ -35,6 +35,12 @@ public class ReviewService {
 		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), findProduct);
 
 		reviewRepository.save(review);
+
+		updateProductAvgScoreAndCount(findProduct, reviewDto.score());
+	}
+
+	private void updateProductAvgScoreAndCount(Product product, int reviewScore) {
+		product.update(reviewScore);
 	}
 
 	private String uploadImageIfPresent(MultipartFile imageFile) {
