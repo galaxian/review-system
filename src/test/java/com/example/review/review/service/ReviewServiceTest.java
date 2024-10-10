@@ -63,4 +63,26 @@ class ReviewServiceTest {
 		);
 
 	}
+
+	@DisplayName("리뷰 이미지 없을 경우 리뷰 등록 성공")
+	@Test
+	void createReviewWithoutImage() {
+		//given
+		Long productId = 1L;
+		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
+
+		given(productRepository.findById(anyLong()))
+			.willReturn(Optional.of(TEST_PRODUCT));
+		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
+			.willReturn(false);
+		given(reviewRepository.save(any(Review.class)))
+			.willReturn(null);
+
+		//when
+		//then
+		assertDoesNotThrow(
+			() -> reviewService.CreateReview(reviewDto, productId, null)
+		);
+
+	}
 }
