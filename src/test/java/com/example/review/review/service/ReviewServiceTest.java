@@ -107,4 +107,23 @@ class ReviewServiceTest {
 			.hasMessage("한 상품만 하나의 리뷰만 작성할 수 있습니다.");
 
 	}
+
+	@DisplayName("리뷰할 상품이 없는 경우 예외 발생")
+	@Test
+	void createReviewNotFoundProduct() {
+		//given
+		Long productId = 1L;
+		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
+
+		given(productRepository.findById(anyLong()))
+			.willReturn(Optional.empty());
+
+		//when
+		//then
+		assertThatThrownBy(
+			() -> reviewService.CreateReview(reviewDto, productId, TEST_IMAGE)
+		).isInstanceOf(RuntimeException.class)
+			.hasMessage("상품이 존재하지 않습니다.");
+
+	}
 }
