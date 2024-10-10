@@ -7,9 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
@@ -20,13 +18,36 @@ public class Product extends TimeStamped {
 	private Long id;
 
 	@Column(name = "score", nullable = false)
-	private Float avgScore;
+	private Float avgScore = 0f;
 
 	@Column(name = "reviewCount", nullable = false)
-	private Long reviewCount;
+	private Long reviewCount = 0L;
+
+	private static final int DECIMAL_PRECISION = 1;
 
 	public Product() {
-		this.avgScore = 0F;
-		this.reviewCount = 0L;
 	}
+
+	public Product(Long id, Float avgScore, Long reviewCount) {
+		this.id = id;
+		this.avgScore = avgScore;
+		this.reviewCount = reviewCount;
+	}
+
+	public void update(int newReviewScore) {
+		this.avgScore = calculateNewAvgScore(newReviewScore);
+		this.reviewCount++;
+	}
+
+	private float calculateNewAvgScore(int newReviewScore) {
+		float totalScore = this.avgScore * this.reviewCount + newReviewScore;
+		float newAvgScore = totalScore / (this.reviewCount + 1);
+		return roundToDecimal(newAvgScore, DECIMAL_PRECISION);
+	}
+
+	private float roundToDecimal(float value, int precision) {
+		double scale = Math.pow(10, precision);
+		return (float)(Math.round(value * scale) / scale);
+	}
+
 }

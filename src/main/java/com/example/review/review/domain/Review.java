@@ -30,10 +30,21 @@ public class Review extends TimeStamped {
 	@Column(name = "content", nullable = false)
 	private String content;
 
-	@Column(name = "img-url")
+	@Column(name = "img_url")
 	private String imgUrl;
+
+	@Column(name = "user_id")
+	private Long userId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private Product product;
+
+	public Review(Integer score, String content, String imgUrl, Long userId, Product product) {
+		this.score = score;
+		this.content = content;
+		this.imgUrl = imgUrl;
+		this.userId = userId;
+		this.product = product;
+	}
 }
