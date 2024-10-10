@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -161,5 +162,35 @@ class ReviewServiceTest {
 		assertThat(result.totalCount()).isEqualTo(TEST_PRODUCT.getReviewCount());
 		assertThat(result.cursor()).isEqualTo(cursor);
 		assertThat(result.reviews().size()).isEqualTo(reviewList.size());
+	}
+
+	@DisplayName("cursor와 pageable에 따른 리뷰 페이지 조회 성공")
+	@Test
+	void FindAllReviewCursorAndPageable() {
+		//given
+		Long productId = 1L;
+		Long cursor = 1L;
+		Pageable pageable = PageRequest.of(0, 1);
+
+		List<Review> reviewList = new ArrayList<>();
+
+		Review review2 = new Review(3, "상품평 2", null, 2L, TEST_PRODUCT);
+
+		reviewList.add(review2);
+
+		given(productRepository.findById(anyLong()))
+			.willReturn(Optional.of(TEST_PRODUCT));
+		given(reviewRepository.findAllByProductIdPagination(anyLong(), anyLong(), any()))
+			.willReturn(reviewList);
+
+		//when
+		FindReviewPageDto result = reviewService.findAllReviews(productId, cursor, pageable);
+
+		//then
+		assertThat(result.totalCount()).isEqualTo(TEST_PRODUCT.getReviewCount());
+		assertThat(result.cursor()).isEqualTo(cursor);
+		assertThat(result.reviews().size()).isEqualTo(reviewList.size());
+
+		assertThat((long)result.reviews().size()).isNotEqualTo(TEST_PRODUCT.getReviewCount());
 	}
 }
