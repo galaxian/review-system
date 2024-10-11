@@ -30,7 +30,7 @@ public class ReviewService {
 	@Transactional
 	public void createReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
 
-		Product findProduct = findById(productId);
+		Product findProduct = findByIdWithPessimisticLock(productId);
 
 		validateDuplicateUserReview(reviewDto.userId(), productId);
 
@@ -85,6 +85,12 @@ public class ReviewService {
 
 	private Product findById(Long productId) {
 		return productRepository.findById(productId).orElseThrow(
+			() -> new RuntimeException("상품이 존재하지 않습니다.")
+		);
+	}
+
+	private Product findByIdWithPessimisticLock(Long productId) {
+		return productRepository.findByIdWithPessimisticLock(productId).orElseThrow(
 			() -> new RuntimeException("상품이 존재하지 않습니다.")
 		);
 	}
