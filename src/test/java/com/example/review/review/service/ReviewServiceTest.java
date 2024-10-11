@@ -53,7 +53,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(false);
@@ -77,7 +77,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(false);
@@ -99,7 +99,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(true);
@@ -120,7 +120,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.empty());
 
 		//when
