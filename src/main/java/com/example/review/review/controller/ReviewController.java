@@ -29,7 +29,7 @@ public class ReviewController {
 		@RequestPart(value = "reviewDto") @Valid CreateReviewDto reviewDto,
 		@RequestPart(value = "imgFile", required = false)
 		MultipartFile imageFile) {
-		reviewService.CreateReview(reviewDto, productId, imageFile);
+		reviewService.createReview(reviewDto, productId, imageFile);
 	}
 
 	@GetMapping("/products/{productId}/reviews")

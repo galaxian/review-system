@@ -28,7 +28,7 @@ public class ReviewService {
 	private final S3Uploader s3Uploader;
 
 	@Transactional
-	public void CreateReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
+	public void createReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
 
 		Product findProduct = findById(productId);
 
@@ -36,11 +36,13 @@ public class ReviewService {
 
 		String uploadUrl = uploadImageIfPresent(imageFile);
 
-		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), findProduct);
+		updateProductAvgScoreAndCount(findProduct, reviewDto.score());
+
+		Product savedProduct = productRepository.save(findProduct);
+
+		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), savedProduct);
 
 		reviewRepository.save(review);
-
-		updateProductAvgScoreAndCount(findProduct, reviewDto.score());
 	}
 
 	@Transactional(readOnly = true)
