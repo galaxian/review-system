@@ -28,19 +28,21 @@ public class ReviewService {
 	private final S3Uploader s3Uploader;
 
 	@Transactional
-	public void CreateReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
+	public void createReview(CreateReviewDto reviewDto, Long productId, MultipartFile imageFile) {
 
-		Product findProduct = findById(productId);
+		Product findProduct = findByIdWithPessimisticLock(productId);
 
 		validateDuplicateUserReview(reviewDto.userId(), productId);
 
 		String uploadUrl = uploadImageIfPresent(imageFile);
 
-		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), findProduct);
+		updateProductAvgScoreAndCount(findProduct, reviewDto.score());
+
+		Product savedProduct = productRepository.save(findProduct);
+
+		Review review = new Review(reviewDto.score(), reviewDto.content(), uploadUrl, reviewDto.userId(), savedProduct);
 
 		reviewRepository.save(review);
-
-		updateProductAvgScoreAndCount(findProduct, reviewDto.score());
 	}
 
 	@Transactional(readOnly = true)
@@ -83,6 +85,12 @@ public class ReviewService {
 
 	private Product findById(Long productId) {
 		return productRepository.findById(productId).orElseThrow(
+			() -> new RuntimeException("상품이 존재하지 않습니다.")
+		);
+	}
+
+	private Product findByIdWithPessimisticLock(Long productId) {
+		return productRepository.findByIdWithPessimisticLock(productId).orElseThrow(
 			() -> new RuntimeException("상품이 존재하지 않습니다.")
 		);
 	}

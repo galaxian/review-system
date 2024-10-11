@@ -53,7 +53,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(false);
@@ -65,7 +65,7 @@ class ReviewServiceTest {
 		//when
 		//then
 		assertDoesNotThrow(
-			() -> reviewService.CreateReview(reviewDto, productId, TEST_IMAGE)
+			() -> reviewService.createReview(reviewDto, productId, TEST_IMAGE)
 		);
 
 	}
@@ -77,7 +77,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(false);
@@ -87,7 +87,7 @@ class ReviewServiceTest {
 		//when
 		//then
 		assertDoesNotThrow(
-			() -> reviewService.CreateReview(reviewDto, productId, null)
+			() -> reviewService.createReview(reviewDto, productId, null)
 		);
 
 	}
@@ -99,7 +99,7 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.of(TEST_PRODUCT));
 		given(reviewRepository.existsByUserIdAndProductId(anyLong(), anyLong()))
 			.willReturn(true);
@@ -107,7 +107,7 @@ class ReviewServiceTest {
 		//when
 		//then
 		assertThatThrownBy(
-			() -> reviewService.CreateReview(reviewDto, productId, TEST_IMAGE)
+			() -> reviewService.createReview(reviewDto, productId, TEST_IMAGE)
 		).isInstanceOf(RuntimeException.class)
 			.hasMessage("한 상품만 하나의 리뷰만 작성할 수 있습니다.");
 
@@ -120,13 +120,13 @@ class ReviewServiceTest {
 		Long productId = 1L;
 		CreateReviewDto reviewDto = new CreateReviewDto(1L, 3, "내용");
 
-		given(productRepository.findById(anyLong()))
+		given(productRepository.findByIdWithPessimisticLock(anyLong()))
 			.willReturn(Optional.empty());
 
 		//when
 		//then
 		assertThatThrownBy(
-			() -> reviewService.CreateReview(reviewDto, productId, TEST_IMAGE)
+			() -> reviewService.createReview(reviewDto, productId, TEST_IMAGE)
 		).isInstanceOf(RuntimeException.class)
 			.hasMessage("상품이 존재하지 않습니다.");
 
